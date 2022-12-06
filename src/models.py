@@ -409,6 +409,10 @@ class OntoModel(nn.Module):
                 ke_embedding_size = config.ke_embedding_size
             self.go_encoder_dense = nn.Linear(768, ke_embedding_size)
 
+        # Why do we get here twice?? 
+        import ipdb
+        ipdb.set_trace()
+
         self.relation_embedding = nn.Embedding(config.num_relations, config.ke_embedding_size)
 
         self.protein_encoder = None

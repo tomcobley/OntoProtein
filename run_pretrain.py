@@ -99,6 +99,7 @@ def main():
     protein_go_data_collator = DataCollatorForProteinGo(protein_tokenizer=protein_tokenizer, text_tokenizer=text_tokenizer, are_protein_length_same=are_protein_length_same)
     go_go_data_collator = DataCollatorForGoGo(tokenizer=text_tokenizer)
 
+    # TC: Why do we reach this twice????
     model = OntoProteinPreTrainedModel.from_pretrained(
         protein_model_path=model_args.protein_model_file_name,
         onto_model_path=model_args.text_model_file_name,

@@ -22,6 +22,9 @@ def get_linear_schedule_with_warmup(
 
     # LM
     def lr_lambda_for_lm(current_step: int):
+        import ipdb
+        ipdb.set_trace()
+
         if current_step < num_lm_warmup_steps:
             return float(current_step) / float(max(1, num_lm_warmup_steps))
         return max(
@@ -30,6 +33,9 @@ def get_linear_schedule_with_warmup(
 
     # KE
     def lr_lambda_for_ke(current_step: int):
+
+        import ipdb
+        ipdb.set_trace()
         if current_step < num_ke_warmup_steps:
             return float(current_step) / float(max(1, num_ke_warmup_steps))
         return max(
@@ -38,6 +44,9 @@ def get_linear_schedule_with_warmup(
 
     # CLS pooler
     def lr_lambda_for_pooler(current_step: int):
+
+        import ipdb
+        ipdb.set_trace()
         if current_step < num_lm_warmup_steps:
             return float(current_step) / float(max(1, num_lm_warmup_steps))
         

@@ -217,15 +217,6 @@ class OntoProteinTrainingArguments(TrainingArguments):
         train_batch_size = per_device_batch_size * max(1, self.n_gpu)
         return train_batch_size    
 
-    def get_warmup_steps(self, num_training_steps: int):
-        """
-        Get number of steps used for a linear warmup.
-        """
-        warmup_steps = (
-            self.warmup_steps if self.warmup_steps > 0 else math.ceil(num_training_steps * self.warmup_ratio)
-        )
-        return warmup_steps
-
     def get_lm_warmup_steps(self, num_training_steps: int):
         """
         Get number of steps used for a linear warmup on LM.

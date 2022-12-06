@@ -1,7 +1,9 @@
 #!/bin/bash
 
+NUM_GPUS=1
+
 OUTPUT_DIR=data/output_data/filtered_ke_text
-PRETRAIN_DATA_DIR=data/pretrain_data/pretrain_data_2021
+PRETRAIN_DATA_DIR=/n/data1/hms/dbmi/zitnik/lab/users/thc130/data/ProteinKG25
 
 # protein sequence setting
 PROTEIN_DATA_FILE_NAME="swiss_seq"
@@ -28,7 +30,7 @@ GO_GO_SAMPLE_TAIL=true
 PROTEIN_MODEL_PATH='data/model_data/ProtBERT'
 
 # OntoModel
-TEXT_MODEL_PATH='data/model_data/OntoModel'
+TEXT_MODEL_PATH='data/model_data/PubMedBERT-filethatdoesnotexist'
 GO_ENCODER_CLS="bert"
 PROTEIN_ENCODER_CLS="bert"
 KE_EMBEDDING_SIZE=512
@@ -57,9 +59,10 @@ KE_LEARNING_RATE=2e-5
 KE_MAX_SCORE=12.0
 KE_SCORE_FN='transE'
 KE_WARMUP_STEPS=50000
+KE_WARMUP_RATIO=0.1
 
 
-deepspeed --num_gpus=4 run_pretrain.py \
+deepspeed --num_gpus=$NUM_GPUS run_pretrain.py \
   --do_train \
   --output_dir $OUTPUT_DIR \
   --pretrain_data_dir $PRETRAIN_DATA_DIR \

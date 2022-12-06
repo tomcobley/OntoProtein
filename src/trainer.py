@@ -9,9 +9,11 @@ from typing import Optional, Tuple, Union, Dict, Any, List
 
 import torch
 import torch.nn as nn
+
 from torch.utils.data import RandomSampler
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.distributed import DistributedSampler
+from torch.utils.tensorboard import SummaryWriter
 from transformers import Trainer, PreTrainedModel, logging
 from transformers.deepspeed import deepspeed_init
 from transformers.training_args import ShardedDDPOption, ParallelMode
@@ -27,6 +29,7 @@ from src.optimization import get_scheduler
 
 
 logger = logging.get_logger(__name__)
+writer = SummaryWriter()
 
 
 # if is_apex_available():
@@ -93,6 +96,8 @@ class OntoProteinTrainer(Trainer):
         self.mlm_loss_fn = OntoProteinMLMLoss(
             mlm_lambda=self.args.mlm_lambda
         )
+
+        self.use_amp = False
 
     def train(
         self,
@@ -301,7 +306,11 @@ class OntoProteinTrainer(Trainer):
                 all_loss['global_step'] = step
                 all_loss['learning_rate'] = self.get_learning_rate()
                 all_loss = dict(all_loss)
-                print(all_loss)
+                # print(all_loss)
+                writer.add_scalar("Loss/MLM", all_loss['mlm'], cur_protein_seq_epoch)
+                writer.add_scalar("Loss/ProteinGoKE", all_loss['protein_go_ke'], cur_protein_go_epoch)
+                writer.add_scalar("Loss/GoGoKE", all_loss['go_go_ke'], cur_go_go_epoch)
+
                 self.loss_recorder.append(all_loss)
 
             # Optimizer step for deepspeed must be called on every step regardless of the value of gradient_accumulation_steps
@@ -352,6 +361,7 @@ class OntoProteinTrainer(Trainer):
         logger.info("\n\nTraining completed.")
         self.is_in_train = False
         self._save_checkpoint()
+        writer.close()
 
     def get_learning_rate(self):
         if self.deepspeed:

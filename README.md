@@ -1,3 +1,21 @@
+Notes:
+- Set `--num_gpus` as relevant
+- Replace the `deepspeed.py` file in your environment's copy of `transformers` (if you use conda, the path will be something like `~.conda/envs/onto_env/lib/python3.8/site-packages/transformers/deepspeed.py` with the `deepspeed.py` file in this repo, then delete the `deepspeed.py` in this repo.
+  - Note: this is **not** good software engineering practise, but for some reason it was (apparently) suggested by the authors in [this issue](https://github.com/zjunlp/OntoProtein/issues/11) 
+- `AttributeError: module 'distutils' has no attribute 'version' `
+  - Fix with `pip install setuptools==59.5.0` ([source](https://github.com/pytorch/pytorch/issues/69894))
+- `run_pretrain.py: error: argument --ke_warmup_ratio: expected one argument`
+  - ADD `KE_WARMUP_RATIO=0.1` to `run_pretrain.py`
+- Set `PRETRAIN_DATA_DIR=/n/data1/hms/dbmi/zitnik/lab/users/thc130/data/ProteinKG25`
+- `TypeError: empty() received an invalid combination of arguments - got (tuple, dtype=NoneType, device=NoneType), but expected one of:...` 
+  - **Tried changing to `GO_ENCODER_CLS="embedding"`**
+    - This eventually leads to: `AttributeError: 'OntoModel' object has no attribute 'go_encoder_dense'` - seems like they didn't really pay attention to the embedding case as this clearly doesn't work (ends up on the bert-specific side of an if statement)
+- `'OntoProteinTrainer' object has no attribute 'use_amp'`        
+  - Tried adding `self.use_amp = False` to `OntoProteinTrainer.__init__`
+- **Switched back to `GO_ENCODER_CLS="bert"`** with `TEXT_MODEL_PATH='path-that-does-not-exist'` 
+  - Explanation of `path-that-does-not-exist`? 
+    - The `TEXT_MODEL_PATH` argument is required, but supplying a valid path to the PubMedBERT model will cause the buggy code to use this model's `config.json` rather than generating a new config that actually works)
+
 # OntoProtein
 
 This is the implement of the ICLR2022 paper "[OntoProtein: Protein Pretraining With Ontology Embedding](https://arxiv.org/pdf/2201.11147.pdf)". OntoProtein is an effective method that make use of structure in GO (Gene Ontology) into text-enhanced protein pre-training model.

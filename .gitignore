@@ -1,2 +1,9 @@
 *.ipynb_checkpoints/
 *__pycache__/
+
+# Model checkpoints
+data/output_data/
+
+# Tensorboard events
+events.out.tfevents.*
+
